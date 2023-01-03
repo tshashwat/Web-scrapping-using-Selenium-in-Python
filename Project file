@@ -1,0 +1,62 @@
+# Objective
+# Automated the events on a  Wikipedia webpage using Selenium.
+# Used regex for text cleaning.
+# Created Python dictionaries from scraped data.
+
+
+# Importing Libraries
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import re
+
+# Creating WebDriver instance
+wd = webdriver.Chrome()
+
+# get wikipedia page
+wd.get("https://www.wikipedia.org/"
+
+# Fetching the search bar element by ID
+input_element = wd.find_element(by=By.ID, value="searchInput")
+
+# Sending value in search bar to search
+input_element.send_keys('ASD')
+
+# Fetch search button through CSS class name
+search = wd.find_element(by=By.CLASS_NAME, value="pure-button") 
+
+# Clicking the search button
+search.click()
+
+# Switching windows to initial window
+window_after = wd.window_handles[0]
+wd.switch_to.window(window_after)
+
+# Fetch search button through link text
+link_text = wd.find_element(By.LINK_TEXT, "Adaptive software development")
+# Clicking the link
+link_text.click()
+
+# Switching window
+window_after = wd.window_handles[0]
+wd.switch_to.window(window_after)
+
+# Fetch all elements with <p> tags to fetch all the text in page
+
+p_tags = wd.find_elements(by=By.TAG_NAME, value="p")
+
+# Extract text from all elements
+text_lines = ''
+for p_tag in p_tags:
+  text_lines += p_tag.text
+
+# Match all digits occurring in squared brackets in the string and replace them with an empty string to clean the text
+
+new_text = re.sub(r'\[[0-9]]', '', text_lines)
+
+# Extract nested elements using CSS selector
+
+elems= wd.find_elements(by=By.CSS_SELECTOR, value='p > a')
+link_dict1={}
+for i in elems:
+    link_dict1[i.text] = i.get_attribute("href")
+print(link_dict1)
